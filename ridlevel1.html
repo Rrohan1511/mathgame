@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Riddle Game</title>
+    <link rel="stylesheet" href="ridlevel1.css">
+</head>
+<body>
+    <h1>Riddle Level 1</h1>
+    <div>
+        <a href="setting.html"> <img src="setting.png" alt="setting" id="setting1-button"></a>
+    </div>
+        <div class="container">  
+        <div id="question" class="question"></div>
+        <input type="text" id="answerInput" placeholder="Your answer...">
+        <button id="checkBtn">Check Answer</button>
+        <div id="feedback"></div>
+    </div>
+    <button id="backbutton" style="display: none;" class="back-button" onclick="goBack()">Back</button>
+    <audio id="correctSound" src="correct.mp3"></audio>
+    <audio id="wrongSound" src="wrong.mp3"></audio>
+    <script>
+        const questions = [
+    "4,5,6 = 15 <br> 3,7,2 = 12 <br> 1,9,8 = 18 <br> 6,7,8 = ? ",
+    "7,3,4 = 25 <br> 4,5,2 = 22 <br> 8,6,4 = 52 <br> 6,3,4 = ? ",
+    "4,5,6 = 34 <br> 5,6,7 = 47 <br> 2,4,5 = 22 <br> 7,5,4 = ? ",
+    "7 = 42 <br> 6 = 30 <br> 5 = 20 <br> 3 = ?",
+    "15,3 = 5 <br> 16,2 = 8 <br> 8,2 = 4 <br> 24,4 = ?",
+    "15,7,4 = 4 <br> 9,7,1 = 1 <br> 11,2,4 = 5 <br> 16,7,4 = ?",
+    "2,3,9 = 54 <br> 3,3,2 = 18 <br> 5,5,3 = 75 <br> 2,7,2 = ?",
+    "9,3,3 = 1,<br> 12,3,1 = 4 <br> 48,6,2 = 4 <br> 25,1,5 = ?",
+    "3,4,5 = 23 <br> 3,5,1 = 8 <br> 8,5 9 = 53 <br> 9,6,2 = ? ",
+    "15,5,7 = 21 <br> 9,1,2 = 18 <br> 9,3,2 = 6 <br> 14,7,7 = ?"
+];
+
+const correctAnswers = [
+    "21",
+    "22",
+    "27",
+    "6",
+    "6",
+    "5",
+    "28",
+    "5",
+    "21",
+    "14"
+];
+let correctCount = 0;
+let currentQuestion = 0;
+const totalQuestions = questions.length;
+
+const questionElement = document.getElementById('question');
+const answerInput = document.getElementById('answerInput');
+const checkButton = document.getElementById('checkBtn');
+const feedbackElement = document.getElementById('feedback');
+
+function generateQuestion() {
+    const questionLines = questions[currentQuestion].split('<br>');
+    questionElement.innerHTML = ''; 
+
+    questionLines.forEach(line => {
+        const lineElement = document.createElement('div');
+        lineElement.textContent = line;
+        questionElement.appendChild(lineElement);
+    });
+
+    answerInput.value = '';
+    feedbackElement.textContent = '';
+}
+
+
+function checkAnswer() {
+    const userAnswer = answerInput.value.trim().toLowerCase();
+    const correctAnswer = correctAnswers[currentQuestion].toLowerCase();
+    if (userAnswer === "") {
+        feedbackElement.textContent="Please enter an answer.";
+        return; 
+    }
+    if (userAnswer === correctAnswer) {
+        feedbackElement.textContent = "Correct! 🎉";
+        correctCount++;
+        correctSound.play();
+    } else {
+        feedbackElement.textContent = "Wrong! Try Again! ❌";
+        wrongSound.play();
+    }
+    currentQuestion++;
+    if (currentQuestion < totalQuestions) {
+        setTimeout(generateQuestion, 1000); 
+    } else {
+        endGame();
+    }
+}
+checkButton.addEventListener('click', () => {
+    if (currentQuestion < totalQuestions) {
+        checkAnswer();
+    }
+});
+answerInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        if (currentQuestion < totalQuestions) {
+            checkAnswer();
+        }
+        event.preventDefault();
+    }
+});
+
+function endGame() {
+            
+            questionElement.textContent = "Game Over";
+            answerInput.style.display = "none";
+            checkButton.style.display = "none";
+            feedbackElement.textContent = `You answered 10 questions, and you got ${correctCount} correct.`;
+            backbutton.style.display = "block";
+        }
+
+        function goBack() {
+
+            window.history.back();
+        }
+
+generateQuestion();
+
+    </script>
+</body>
+</html>
